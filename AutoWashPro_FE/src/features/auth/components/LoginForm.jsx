@@ -79,9 +79,9 @@ export default function LoginForm() {
           <input type="checkbox" className="w-4 h-4 text-[#003d9b] border-[#c3c6d6] rounded" />
           <span className="text-sm text-[#434654]">Ghi nhớ</span>
         </label>
-        <a href="#" className="text-sm text-[#003d9b] hover:underline font-medium">
+        <Link to="/forgot-password" className="text-sm text-[#003d9b] hover:underline font-medium">
           Quên mật khẩu?
-        </a>
+        </Link>
       </div>
 
       <button
