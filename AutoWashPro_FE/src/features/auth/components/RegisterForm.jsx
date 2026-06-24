@@ -1,20 +1,72 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
+import { registerWithEmail } from '../services/authService';
 
 export default function RegisterForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Register logic
-    navigate('/login');
+    if (password !== confirmPassword) {
+      setError('Mật khẩu xác nhận không khớp');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const username = email.split('@')[0];
+      await registerWithEmail({ 
+        fullName: name, 
+        username: username,
+        email: email, 
+        phoneNumber: phone, 
+        password: password 
+      });
+      // Redirect or show success message
+      navigate('/login', { state: { message: 'Đăng ký thành công. Vui lòng đăng nhập.' } });
+    } catch (err) {
+      console.error("Register error:", err.response?.data || err);
+      let errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.';
+
+      const errorsDetail = err.response?.data?.errors;
+      if (errorsDetail) {
+        if (Array.isArray(errorsDetail)) {
+          errorMsg = errorsDetail.map(e => e.msg || e.message || JSON.stringify(e)).join(', ');
+        } else if (typeof errorsDetail === 'object') {
+          errorMsg = Object.values(errorsDetail).flat().join(', ');
+        }
+      } else if (Array.isArray(err.response?.data?.message)) {
+        errorMsg = err.response?.data?.message.join(', ');
+      }
+
+      setError(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
+
       <div className="flex flex-col gap-1">
         <label className="text-[#181c1e] text-sm font-medium">Họ và tên</label>
         <div className="relative">
@@ -24,6 +76,8 @@ export default function RegisterForm() {
           <input
             type="text"
             required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Nguyễn Văn A"
             className="w-full border border-[#e0e3e6] rounded-lg pl-11 pr-4 py-3 focus:outline-none focus:border-[#003d9b] bg-white text-[#181c1e] placeholder:text-gray-400"
           />
@@ -40,6 +94,8 @@ export default function RegisterForm() {
             <input
               type="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="email@example.com"
               className="w-full border border-[#e0e3e6] rounded-lg pl-11 pr-4 py-3 focus:outline-none focus:border-[#003d9b] bg-white text-[#181c1e] placeholder:text-gray-400"
             />
@@ -55,6 +111,8 @@ export default function RegisterForm() {
             <input
               type="tel"
               required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               placeholder="090 123 4567"
               className="w-full border border-[#e0e3e6] rounded-lg pl-11 pr-4 py-3 focus:outline-none focus:border-[#003d9b] bg-white text-[#181c1e] placeholder:text-gray-400"
             />
@@ -71,6 +129,8 @@ export default function RegisterForm() {
           <input
             type={showPassword ? "text" : "password"}
             required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             className="w-full border border-[#e0e3e6] rounded-lg pl-11 pr-11 py-3 focus:outline-none focus:border-[#003d9b] bg-white text-[#181c1e] placeholder:text-gray-400"
           />
@@ -93,6 +153,8 @@ export default function RegisterForm() {
           <input
             type={showConfirmPassword ? "text" : "password"}
             required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="••••••••"
             className="w-full border border-[#e0e3e6] rounded-lg pl-11 pr-11 py-3 focus:outline-none focus:border-[#003d9b] bg-white text-[#181c1e] placeholder:text-gray-400"
           />
@@ -115,9 +177,17 @@ export default function RegisterForm() {
         </p>
       </div>
 
-      <button type="submit" className="w-full bg-[#0052cc] text-white font-medium py-3.5 rounded-lg hover:bg-[#0047b3] transition shadow-sm mt-2 flex justify-center items-center gap-2">
-        Đăng ký ngay
-        <ArrowRight className="h-4 w-4" />
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-[#0052cc] text-white font-medium py-3.5 rounded-lg hover:bg-[#0047b3] transition shadow-sm mt-2 flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isLoading ? 'Đang xử lý...' : (
+          <>
+            Đăng ký ngay
+            <ArrowRight className="h-4 w-4" />
+          </>
+        )}
       </button>
     </form>
   );
