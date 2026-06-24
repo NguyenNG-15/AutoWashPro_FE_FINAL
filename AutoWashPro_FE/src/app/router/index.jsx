@@ -11,6 +11,7 @@ import AdminRoute from '../../routes/AdminRoute';
 import HomePage from '../../features/home/pages/HomePage';
 import LoginPage from '../../features/auth/pages/LoginPage';
 import RegisterPage from '../../features/auth/pages/RegisterPage';
+import ForgotPasswordPage from '../../features/auth/pages/ForgotPasswordPage';
 import DashboardPage from '../../features/customer/pages/DashboardPage';
 import CustomerBookingPage from '../../features/customer/pages/CustomerBookingPage';
 import CustomerProfilePage from '../../features/customer/pages/CustomerProfilePage';
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: <RegisterPage />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPasswordPage />,
       },
     ],
   },
