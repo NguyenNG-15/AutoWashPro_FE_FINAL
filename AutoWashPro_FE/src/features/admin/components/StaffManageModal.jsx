@@ -21,6 +21,9 @@ import {
   updateStaff,
   updateStaffAccountStatus,
   updateStaffWorkStatus,
+  deleteStaff,
+  resendStaffActivation,
+  restoreStaff,
 } from '../services/staffService';
 import { fetchRoles } from '../services/roleService';
 import {
@@ -47,6 +50,9 @@ export default function StaffManageModal({ isOpen, staffId, onClose, onSuccess }
   const [isSavingAccountStatus, setIsSavingAccountStatus] = useState(false);
   const [isSavingRoles, setIsSavingRoles] = useState(false);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   useEffect(() => {
     if (!isOpen || !staffId) return undefined;
@@ -191,6 +197,50 @@ export default function StaffManageModal({ isOpen, staffId, onClose, onSuccess }
       setError(getApiErrorMessage(err, 'Unable to reset password.'));
     } finally {
       setIsResettingPassword(false);
+    }
+  };
+
+  const handleResendActivation = async () => {
+    setIsResending(true);
+    setError('');
+    setInfo('');
+    try {
+      await resendStaffActivation(staffId);
+      notifySuccess('Activation email has been resent successfully.');
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Unable to resend activation email.'));
+    } finally {
+      setIsResending(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${staff.name}?`)) return;
+    setIsDeleting(true);
+    setError('');
+    setInfo('');
+    try {
+      await deleteStaff(staffId);
+      const updated = await fetchStaffById(staffId);
+      notifySuccess('Staff deleted successfully.', updated);
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Unable to delete staff.'));
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    setIsRestoring(true);
+    setError('');
+    setInfo('');
+    try {
+      const updated = await restoreStaff(staffId);
+      notifySuccess('Staff restored successfully.', updated);
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Unable to restore staff.'));
+    } finally {
+      setIsRestoring(false);
     }
   };
 
@@ -465,6 +515,48 @@ export default function StaffManageModal({ isOpen, staffId, onClose, onSuccess }
                 >
                   {isResettingPassword ? 'Resetting...' : 'Reset Password'}
                 </button>
+              </div>
+
+              {/* Danger Zone */}
+              <div className="rounded-xl border border-red-100 bg-red-50/30 p-5 flex flex-col gap-3 mt-4">
+                <h3 className="text-sm font-bold text-red-600 flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  Danger Zone
+                </h3>
+                <p className="text-xs text-red-500 mb-2">
+                  These actions can have irreversible effects on this staff member's account.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {staff.accountStatus === 'PENDING_ACTIVATION' && (
+                    <button
+                      type="button"
+                      onClick={handleResendActivation}
+                      disabled={isResending}
+                      className="px-4 py-2 bg-white border border-red-200 text-red-600 text-sm font-semibold rounded-lg hover:bg-red-50 disabled:opacity-60"
+                    >
+                      {isResending ? 'Sending...' : 'Resend Activation Email'}
+                    </button>
+                  )}
+                  {staff.accountStatus === 'DELETED' ? (
+                    <button
+                      type="button"
+                      onClick={handleRestore}
+                      disabled={isRestoring}
+                      className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-60"
+                    >
+                      {isRestoring ? 'Restoring...' : 'Restore Staff'}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 disabled:opacity-60"
+                    >
+                      {isDeleting ? 'Deleting...' : 'Delete Staff'}
+                    </button>
+                  )}
+                </div>
               </div>
             </>
           ) : null}
