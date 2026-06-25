@@ -1,20 +1,31 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { forgotPassword } from '../services/authService';
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
-    // TODO: Integrate with actual forgot password API
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await forgotPassword(email);
       setIsSubmitted(true);
-    }, 1500);
+    } catch (err) {
+      const message =
+        err.response?.data?.message ??
+        err.response?.data?.error ??
+        err.message ??
+        'Đã có lỗi xảy ra. Vui lòng thử lại sau.';
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -38,6 +49,11 @@ export default function ForgotPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         <label htmlFor="email" className="text-[#181c1e] text-sm font-medium">
           Địa chỉ Email
