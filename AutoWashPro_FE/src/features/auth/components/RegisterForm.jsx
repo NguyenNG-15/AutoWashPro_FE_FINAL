@@ -9,6 +9,7 @@ export default function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +29,6 @@ export default function RegisterForm() {
     setError('');
 
     try {
-      const username = email.split('@')[0];
       await registerWithEmail({ 
         fullName: name, 
         username: username,
@@ -79,6 +79,23 @@ export default function RegisterForm() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nguyễn Văn A"
+            className="w-full border border-[#e0e3e6] rounded-lg pl-11 pr-4 py-3 focus:outline-none focus:border-[#003d9b] bg-white text-[#181c1e] placeholder:text-gray-400"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="text-[#181c1e] text-sm font-medium">Tên đăng nhập</label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <User className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            required
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="nguyenvana123"
             className="w-full border border-[#e0e3e6] rounded-lg pl-11 pr-4 py-3 focus:outline-none focus:border-[#003d9b] bg-white text-[#181c1e] placeholder:text-gray-400"
           />
         </div>
