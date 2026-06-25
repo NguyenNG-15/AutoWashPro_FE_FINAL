@@ -24,6 +24,8 @@ export function getAccountStatusClass(accountStatus = '') {
 
   if (value === 'ACTIVE') return 'bg-[#f0fdf4] text-[#16a34a]';
   if (value === 'INACTIVE') return 'bg-[#fef2f2] text-[#dc2626]';
+  if (value === 'PENDING_ACTIVATION') return 'bg-[#fff7ed] text-[#ea580c]';
+  if (value === 'DELETED') return 'bg-gray-100 text-[#434654]';
 
   return 'bg-gray-100 text-[#848a9c]';
 }
@@ -183,4 +185,37 @@ export async function updateStaffWorkStatus(id, workStatus) {
 export async function assignStaffRoles(staffId, roleIds) {
   const response = await axiosClient.put(`/api/v1/admin/staffs/${staffId}/roles`, { roleIds });
   return normalizeStaff(unwrapData(response));
+}
+
+export async function deleteStaff(id) {
+  const response = await axiosClient.delete(`/api/v1/admin/staffs/${id}`);
+  return unwrapData(response);
+}
+
+export async function resendStaffActivation(id) {
+  const response = await axiosClient.post(`/api/v1/admin/staffs/${id}/resend-activation`);
+  return unwrapData(response);
+}
+
+export async function restoreStaff(id) {
+  const response = await axiosClient.post(`/api/v1/admin/staffs/${id}/restore`);
+  return unwrapData(response);
+}
+
+export async function fetchStaffAuditLogs({ page = 0, size = 15, search = '' } = {}) {
+  const params = { page, size };
+  if (search.trim()) {
+    params.search = search.trim();
+  }
+
+  const response = await axiosClient.get('/api/v1/admin/staffs/audit-logs', { params });
+  const data = unwrapData(response);
+
+  return {
+    logs: data.content ?? data.logs ?? [],
+    page: data.page ?? page,
+    size: data.size ?? size,
+    totalElements: data.totalElements ?? 0,
+    totalPages: data.totalPages ?? 0,
+  };
 }

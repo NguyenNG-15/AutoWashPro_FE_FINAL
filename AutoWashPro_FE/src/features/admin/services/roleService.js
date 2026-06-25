@@ -82,9 +82,7 @@ export async function fetchRoles() {
 }
 
 export async function updateRolePermissions(roleId, permissionIds) {
-  const response = await axiosClient.put(`/api/v1/roles/${roleId}/permissions`, {
-    permissionIds,
-  });
+  const response = await axiosClient.put(`/api/v1/roles/${roleId}/permissions`, permissionIds);
   return unwrapData(response);
 }
 

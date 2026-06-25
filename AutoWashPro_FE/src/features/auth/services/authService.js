@@ -24,3 +24,22 @@ export async function verifyEmail(token) {
   const response = await axiosClient.get(`/api/v1/customer/auth/email/verify?token=${token}`);
   return response.data?.data ?? response.data;
 }
+
+// ==========================================
+// STAFF AUTH API
+// ==========================================
+
+export async function staffForgotPassword(email) {
+  const response = await axiosClient.post('/api/v1/auth/staff/forgot-password', { email });
+  return response.data?.data ?? response.data;
+}
+
+export async function staffResetPassword(token, newPassword, confirmPassword) {
+  const response = await axiosClient.post('/api/v1/auth/staff/reset-password', { token, newPassword, confirmPassword });
+  return response.data?.data ?? response.data;
+}
+
+export async function staffVerifyEmail(token) {
+  const response = await axiosClient.get(`/api/v1/auth/staff/verify-email?token=${token}`);
+  return response.data?.data ?? response.data;
+}
