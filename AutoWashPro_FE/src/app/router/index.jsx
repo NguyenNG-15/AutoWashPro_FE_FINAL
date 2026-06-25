@@ -14,6 +14,7 @@ import RegisterPage from '../../features/auth/pages/RegisterPage';
 import ForgotPasswordPage from '../../features/auth/pages/ForgotPasswordPage';
 import ResetPasswordPage from '../../features/auth/pages/ResetPasswordPage';
 import VerifyEmailPage from '../../features/auth/pages/VerifyEmailPage';
+import StaffVerifyEmailPage from '../../features/auth/pages/StaffVerifyEmailPage';
 import DashboardPage from '../../features/customer/pages/DashboardPage';
 import CustomerBookingPage from '../../features/customer/pages/CustomerBookingPage';
 import CustomerProfilePage from '../../features/customer/pages/CustomerProfilePage';
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: 'verify-email',
         element: <VerifyEmailPage />,
+      },
+      {
+        path: 'staff/verify-email',
+        element: <StaffVerifyEmailPage />,
       },
     ],
   },
