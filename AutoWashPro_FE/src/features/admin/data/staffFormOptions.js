@@ -8,6 +8,8 @@ export const workStatusOptions = [
 export const accountStatusOptions = [
   { value: 'ACTIVE', label: 'Active' },
   { value: 'INACTIVE', label: 'Locked' },
+  { value: 'PENDING_ACTIVATION', label: 'Pending Activation' },
+  { value: 'DELETED', label: 'Deleted' },
 ];
 
 export const inputClass =
