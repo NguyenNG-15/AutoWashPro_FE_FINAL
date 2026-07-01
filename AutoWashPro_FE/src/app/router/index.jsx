@@ -25,8 +25,8 @@ import StaffTasksPage from '../../features/staff/pages/StaffTasksPage';
 import StaffCompletedPage from '../../features/staff/pages/StaffCompletedPage';
 import StaffNotificationsPage from '../../features/staff/pages/StaffNotificationsPage';
 import StaffReportsPage from '../../features/staff/pages/StaffReportsPage';
+import StaffBookingsPage from '../../features/staff/pages/StaffBookingsPage';
 import AdminDashboardPage from '../../features/admin/pages/AdminDashboardPage';
-import AdminBookingsPage from '../../features/admin/pages/AdminBookingsPage';
 import AdminCustomersPage from '../../features/admin/pages/AdminCustomersPage';
 import AdminStaffPage from '../../features/admin/pages/AdminStaffPage';
 import AdminFinancePage from '../../features/admin/pages/AdminFinancePage';
@@ -140,6 +140,10 @@ const router = createBrowserRouter([
         path: 'reports',
         element: <StaffReportsPage />,
       },
+      {
+        path: 'bookings',
+        element: <StaffBookingsPage />,
+      },
     ],
   },
   {
@@ -157,10 +161,6 @@ const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <AdminDashboardPage />,
-      },
-      {
-        path: 'bookings',
-        element: <AdminBookingsPage />,
       },
       {
         path: 'staff',

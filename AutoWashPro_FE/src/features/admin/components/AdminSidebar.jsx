@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../../app/store/authStore';
-import useBookingStore from '../store/bookingStore';
 import {
   LayoutDashboard,
   Calendar,
@@ -18,7 +17,6 @@ import {
 
 const menuItems = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin/bookings', label: 'Bookings', icon: Calendar },
   { to: '/admin/staff', label: 'Staff', icon: Users },
   { to: '/admin/customers', label: 'Customers', icon: UserCircle },
   { to: '/admin/loyalty', label: 'Loyalty', icon: Award },
@@ -30,17 +28,11 @@ const menuItems = [
 
 export default function AdminSidebar() {
   const logout = useAuthStore((state) => state.logout);
-  const openQuickBooking = useBookingStore((state) => state.openQuickBooking);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/login-internal', { replace: true });
-  };
-
-  const handleQuickBooking = () => {
-    openQuickBooking();
-    navigate('/admin/bookings');
   };
 
   return (
@@ -84,14 +76,6 @@ export default function AdminSidebar() {
       </nav>
 
       <div className="px-4 py-5 border-t border-gray-100 flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={handleQuickBooking}
-          className="w-full bg-[#0047AB] hover:bg-[#003a8c] text-white text-sm font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Quick New Booking
-        </button>
         <button className="flex items-center gap-2 px-3 py-2 text-sm text-[#434654] hover:text-[#181c1e] transition-colors">
           <LifeBuoy className="w-4 h-4" />
           Support
