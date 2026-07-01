@@ -1,7 +1,9 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../../app/store/authStore';
+import useBookingStore from '../store/bookingStore';
 import {
   LayoutDashboard,
+  Calendar,
   ClipboardList,
   History,
   Bell,
@@ -11,7 +13,12 @@ import {
 } from 'lucide-react';
 
 const menuItems = [
-  { to: '/staff/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  {
+    to: '/staff/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+  },
+  { to: '/staff/bookings', label: 'Quản lý Bookings', icon: Calendar },
   { to: '/staff/tasks', label: 'Nhiệm vụ được giao', icon: ClipboardList },
   { to: '/staff/completed', label: 'Lịch sử hoàn thành', icon: History },
   { to: '/staff/notifications', label: 'Thông báo', icon: Bell },
@@ -20,7 +27,13 @@ const menuItems = [
 
 export default function StaffSidebar() {
   const logout = useAuthStore((state) => state.logout);
+  const openQuickBooking = useBookingStore((state) => state.openQuickBooking);
   const navigate = useNavigate();
+
+  const handleQuickBooking = () => {
+    openQuickBooking();
+    navigate('/staff/bookings');
+  };
 
   const handleLogout = () => {
     logout();
@@ -70,8 +83,16 @@ export default function StaffSidebar() {
       <div className="px-4 py-5 border-t border-gray-100 flex flex-col gap-3">
         <button
           type="button"
-          onClick={() => navigate('/staff/tasks')}
+          onClick={handleQuickBooking}
           className="w-full bg-[#0047AB] hover:bg-[#003a8c] text-white text-sm font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+        >
+          <Calendar className="w-4 h-4" />
+          Tạo Booking Nhanh
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/staff/tasks')}
+          className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-[#434654] text-sm font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
         >
           <ClipboardList className="w-4 h-4" />
           Xem nhiệm vụ hôm nay

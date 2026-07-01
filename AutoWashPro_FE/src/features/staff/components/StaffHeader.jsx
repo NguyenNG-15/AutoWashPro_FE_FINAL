@@ -1,5 +1,7 @@
-import { Bell, Clock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Bell, Clock, Car } from 'lucide-react';
 import useAuthStore from '../../../app/store/authStore';
+import PlateCheckInOutModal from './PlateCheckInOutModal';
 
 function getDisplayName(user) {
   if (!user) return 'Nhân viên';
@@ -17,6 +19,19 @@ function getInitials(name) {
 export default function StaffHeader() {
   const user = useAuthStore((state) => state.user);
   const displayName = getDisplayName(user);
+  const [isCheckInOutOpen, setIsCheckInOutOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Nhấn F2 để mở nhanh Check-in / Check-out
+      if (e.key === 'F2') {
+        e.preventDefault();
+        setIsCheckInOutOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <header className="h-16 shrink-0 bg-white border-b border-gray-200 px-6 flex items-center justify-between gap-4">
@@ -32,6 +47,17 @@ export default function StaffHeader() {
       </div>
 
       <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setIsCheckInOutOpen(true)}
+          className="flex items-center gap-2 px-3 py-2 bg-[#0047AB] hover:bg-[#003a8c] text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
+        >
+          <Car className="w-4 h-4" />
+          <span className="hidden sm:inline">Check-in / Check-out (F2)</span>
+        </button>
+
+        <div className="h-6 w-px bg-gray-200 mx-1" />
+
         <button
           type="button"
           className="p-2 rounded-lg hover:bg-gray-50 transition-colors relative"
@@ -50,6 +76,11 @@ export default function StaffHeader() {
           </div>
         </div>
       </div>
+
+      <PlateCheckInOutModal
+        isOpen={isCheckInOutOpen}
+        onClose={() => setIsCheckInOutOpen(false)}
+      />
     </header>
   );
 }
